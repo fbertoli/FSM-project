@@ -30,7 +30,6 @@ class dualModel:
 		for t in V_TYPES:
 			self.mod.addConstr(quicksum(q[t,i] for i in DAYS) == self.fixed_cost[t], name = "f"+str(t))
 
-		## if we have some forbidden solutions
 		for i in DAYS:
 			for j in range(len(self.data[i])):
 				self.mod.addConstr(p[i] - quicksum([self.data[i][j][0][t] * q[t,i] for t in V_TYPES]) <= self.data[i][j][1], name = "d"+str(i) +"_"+ str(j))
@@ -62,6 +61,9 @@ class dualModel:
 			for j in range(len(self.data[i])):
 				d[i,j] = self.mod.getConstrByName("d"+str(i) + "_" + str(j)).Pi
 		return f,d
+
+	def getFleet(self):
+		return [self.mod.getConstrByName("f"+str(t)).Pi for t in range(self.v_count)]
     
 	def getInterestingDays(self):
 		"""return a list divided by vehicle. For each vehicle which days have nonzero cost on that vehicle"""
